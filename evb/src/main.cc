@@ -333,7 +333,7 @@ setup() {
     err |= init_heartkit();
     err |= ns_peripheral_button_init(&button_config);
     ns_printf("♥️ HeartKit Demo\n\n");
-    ns_printf("Please select data collection options:\n\n\t1. BTN1=sensor\n\t2. BTN2=stimulus\n");
+    ns_printf("Please select data collection options:\n\n\t1. BTN0=sensor\n\t2. BTN1=client\n");
 }
 
 void

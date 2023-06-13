@@ -148,7 +148,7 @@ Upon start, the client will scan and connect to the EVB serial port. If no port 
 
 ### 4. Trigger start
 
-Now that the EVB client, PC client, and PC REST server are running, press either __Button 1 (BTN1)__ or __Button 2 (BTN2)__ on the EVB to start the demo. Pressing Button 1 will use live sensor data whereas Button 2 will use test dataset supplied by the PC. In __EVB Terminal__, the EVB should be printing the stage it's in (e.g `INFERENCE STAGE`) and any results. In __PC Terminal__, the PC should be plotting the data along with classification results. Once finished, Button 1 or Button 2 can be pressed to stop capturing.
+Now that the EVB client, PC client, and PC REST server are running, press either __Button 0 (BTN0)__ or __Button 1 (BTN1)__ on the EVB to start the demo. Pressing Button 0 will use live sensor data whereas Button 1 will use test dataset supplied by the PC. In __EVB Terminal__, the EVB should be printing the stage it's in (e.g `INFERENCE STAGE`) and any results. In __PC Terminal__, the PC should be plotting the data along with classification results. Once finished, Button 0 or Button 1 can be pressed to stop capturing.
 
 ![evb-demo-plot](../assets/heartkit-demo.png)
 
