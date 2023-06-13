@@ -1,0 +1,57 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "type": "shell",
+            "label": "ble_firmware_update",
+            "command": "make -C boards/common4/examples/ble/ble_firmware_update -j"
+        },
+        {
+            "type": "shell",
+            "label": "ble_freertos_ancs",
+            "command": "make -C boards/common4/examples/ble/ble_freertos_ancs -j"
+        },
+        {
+            "type": "shell",
+            "label": "ble_freertos_adv_ext",
+            "command": "make -C boards/common4/examples/ble/ble_freertos_adv_ext -j"
+        },
+        {
+            "type": "shell",
+            "label": "ble_freertos_throughput",
+            "command": "make -C boards/common4/examples/ble/ble_freertos_throughput -j"
+        },
+        {
+            "type": "shell",
+            "label": "ble_freertos_fit",
+            "command": "make FAMILY=apollo4b BOARD=apollo4b_blue_evb -C boards/common4/examples/ble/ble_freertos_fit -j"
+        },
+        {
+            "type": "shell",
+            "label": "xspi_test_cases",
+            "command": "make -C tests/testcases/apollo4b/ambt52_test_cases/xspi_test_cases -j"
+        },
+        {
+            "type": "shell",
+            "label": "uart_ble_bridge",
+            "command": "make -C boards/common4/examples/ble/uart_ble_bridge -j"
+        },
+        {
+            "type": "shell",
+            "label": "rebuild_ap4b_ble_examples",
+            "command": "make realclean; make FAMILY=apollo4b BOARD=apollo4b_blue_evb -C boards/common4/examples/ble -j"
+        }
+        {
+            "type": "shell",
+            "label": "rebuild_ap4p_ble_examples",
+            "command": "make realclean; make FAMILY=apollo4p BOARD=apollo4p_blue_eb -C boards/common4/examples/ble -j"
+        },
+        {
+            "type": "shell",
+            "label": "hello_world_4b_evb",
+            "command": "make -C boards/common4/examples/peripherals/hello_world -j"
+        },
+    ]
+}
