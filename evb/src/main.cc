@@ -137,9 +137,14 @@ start_collecting(void) {
     if (collectMode == SENSOR_DATA_COLLECT) {
         start_sensor();
         // Discard first second for sensor warm up time
+        uint32_t sampleIndex = 0;
         for (size_t i = 0; i < 100; i++) {
-            capture_sensor_data(hkData);
+            uint32_t numSamples = capture_sensor_data(hkData);
+            if (i & 1 == 1) {
+                ns_printf("%f\n", hkData[sampleIndex]);
+            }
             sleep_us(10000);
+            sampleIndex += numSamples;
         }
     }
     numSamples = 0;
