@@ -28,6 +28,15 @@
 #include "sensor.h"
 #include "stimulus.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+#include "hci_api.h"
+#include "hci_drv_apollo.h"
+#ifdef __cplusplus
+    }
+#endif
+
 // Application globals
 static uint32_t numSamples = 0;
 
@@ -443,6 +452,7 @@ main(void) {
      * @return int
      */
     setup();
+    HciDrvRadioBoot(1);
     while (1) {
         loop();
     }
