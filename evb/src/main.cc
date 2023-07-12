@@ -149,7 +149,7 @@ start_collecting(void) {
         uint32_t sampleIndex = 0;
         for (size_t i = 0; i < 100; i++) {
             uint32_t numSamples = capture_sensor_data(hkData);
-            if (i & 1 == 1) {
+            if ((i & 1) == 1) {
                 ns_printf("%f\n", hkData[sampleIndex]);
             }
             sleep_us(10000);
@@ -309,6 +309,7 @@ collect_samples() {
     }
     numSamples += newSamples;
     sleep_us(5000);
+    ns_printf("Number of Samples: %lu\r\n", numSamples);
     return newSamples;
 }
 
@@ -403,6 +404,7 @@ loop() {
             uint32_t numSamples = MIN(HK_DATA_LEN - i, SAMPLE_RATE);
             send_samples_to_pc(hkData, i, numSamples);
         }
+        
         state = INFERENCE_STATE;
         break;
 
