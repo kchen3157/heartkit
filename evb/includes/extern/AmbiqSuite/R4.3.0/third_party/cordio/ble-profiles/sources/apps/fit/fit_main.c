@@ -43,11 +43,13 @@
 #include "svc_dis.h"
 #include "svc_batt.h"
 #include "svc_rscs.h"
+#include "svc_cust.h"
 #include "gatt/gatt_api.h"
 #include "bas/bas_api.h"
 #include "hrps/hrps_api.h"
 #include "rscp/rscp_api.h"
 #include "fit_api.h"
+#include "custss_api.h"
 
 /**************************************************************************************************
   Macros
@@ -821,6 +823,8 @@ void FitStart(void)
   SvcBattCbackRegister(BasReadCback, NULL);
   SvcBattAddGroup();
   SvcRscsAddGroup();
+
+  CustssStart();
 
   /* Set Service Changed CCCD index. */
   GattSetSvcChangedIdx(FIT_GATT_SC_CCC_IDX);

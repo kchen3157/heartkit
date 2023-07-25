@@ -49,6 +49,11 @@ INCLUDES+= extern/AmbiqSuite/R4.3.0/third_party/cordio/ble-profiles/sources/prof
 INCLUDES+= extern/AmbiqSuite/R4.3.0/third_party/FreeRTOSv10.1.1/Source/include
 INCLUDES+= extern/AmbiqSuite/R4.3.0/third_party/cordio/ble-host/sources/stack/smp
 INCLUDES+= extern/AmbiqSuite/R4.3.0/third_party/cordio/ble-profiles/include/app
+INCLUDES+= extern/AmbiqSuite/R4.3.0/ambiq_ble/apps/barebone
+INCLUDES+= extern/AmbiqSuite/R4.3.0/ambiq_ble/profiles/amota
+INCLUDES+= extern/AmbiqSuite/R4.3.0/ambiq_ble/profiles/custss
+INCLUDES+= extern/AmbiqSuite/R4.3.0/ambiq_ble/services
+
 
 # Fit example INCLUDES
 INCLUDES+= extern/AmbiqSuite/R4.3.0/boards/apollo4p_blue_kxr_evb/examples/ble/ble_freertos_fit/src
@@ -82,6 +87,10 @@ VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/third_party/cordio/ble-profiles/sour
 VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/devices
 VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/third_party/cordio/ble-profiles/sources/apps/app/common
 VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/third_party/cordio/wsf/sources/port/freertos
+VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/ambiq_ble/apps/barebone
+VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/ambiq_ble/profiles/amota
+VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/ambiq_ble/profiles/custss
+VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/ambiq_ble/services
 
 # Fit example sources
 VPATH+=:./includes/extern/AmbiqSuite/R4.3.0/boards/apollo4p_blue_kxr_evb/examples/ble/ble_freertos_fit/src
@@ -147,6 +156,7 @@ sources += wstr.c
 sources += crc32.c
 sources += hrps_main.c
 sources += fit_main.c
+sources += custss_main.c
 sources += atts_ccc.c
 sources += attc_main.c
 # sources += attc_eatt.c
@@ -236,6 +246,7 @@ sources += svc_hts.c
 sources += svc_plxs.c
 sources += svc_time.c
 sources += svc_core.c
+sources += svc_cust.c
 sources += list.c
 sources += queue.c
 sources += timers.c
