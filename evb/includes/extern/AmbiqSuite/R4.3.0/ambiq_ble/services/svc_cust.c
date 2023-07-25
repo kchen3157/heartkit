@@ -102,23 +102,56 @@ static const uint16_t   ReadOnlyValLen                          = sizeof(ReadOnl
 static const uint8_t    ReadOnlyChUsrDescrData[]                = "Read Only Sample Characteristic";
 static const uint16_t   ReadOnlyChUsrDescrLen                   = sizeof(ReadOnlyChUsrDescrData) - 1u;
 
-/* Notification Sample Characteristic */
-static const uint8_t    NotifyChData[]                          = {ATT_PROP_NOTIFY | ATT_PROP_READ, UINT16_TO_BYTES(CUSTS_HANDLE_NOTIFYONLY), ATT_UUID_CUSTS_NOTIFYONLY};
-static const uint16_t   NotifyCharChLen                         = sizeof(NotifyChData);
+/* Notification ECG Sample Characteristic */
+static const uint8_t    NotifyChData_ecg_sample[]               = {ATT_PROP_NOTIFY | ATT_PROP_READ, UINT16_TO_BYTES(CUSTS_HANDLE_ECG_SAMPLE), ATT_UUID_ECG_SAMPLE};
+static const uint16_t   NotifyCharChLen_ecg_sample               = sizeof(NotifyChData_ecg_sample);
 
-/* Notification Sample Value */
-static const uint8_t    NotifyValUuid[]                         = {UINT16_TO_BYTES(CUSTS_HANDLE_NOTIFYONLY)};
-static       uint8_t    NotifyValData[20]                       = {0x00};
-static const uint16_t   NotifyValLen                            = sizeof(NotifyValData);
+/* Notification ECG Sample Value */
+static const uint8_t    NotifyValUuid_ecg_sample[]              = {UINT16_TO_BYTES(CUSTS_HANDLE_ECG_SAMPLE)};
+static       uint8_t    NotifyValData_ecg_sample[20]            = {0x00};
+static const uint16_t   NotifyValLen_ecg_sample                 = sizeof(NotifyValData_ecg_sample);
 
-/* Notification Sample Client Characteristic Configuration. */
-static       uint8_t    NotifyValClientChrConfigData[]          = {0x00, 0x00};
-static const uint16_t   NotifyValClientChrConfigLen             = sizeof(NotifyValClientChrConfigData);
+/* Notification ECG Sample Client Characteristic Configuration. */
+static       uint8_t    NotifyValClientChrConfigData_ecg_sample[]          = {0x00, 0x00};
+static const uint16_t   NotifyValClientChrConfigLen_ecg_sample             = sizeof(NotifyValClientChrConfigData_ecg_sample);
 
-/* Notification Sample Characteristic User Description. */
-static const uint8_t    NotifyChUsrDescrData[]                  = "Notification Sample Characteristic";
-static const uint16_t   NotifyChUsrDescrLen                     = sizeof(NotifyChUsrDescrData) - 1u;
+/* Notification ECG Sample Characteristic User Description. */
+static const uint8_t    NotifyChUsrDescrData_ecg_sample[]                  = "Notification ECG Sample Characteristic";
+static const uint16_t   NotifyChUsrDescrLen_ecg_sample                     = sizeof(NotifyChUsrDescrData_ecg_sample) - 1u;
 
+/* Notification ECG Sample Mask Characteristic */
+static const uint8_t    NotifyChData_ecg_sample_mask[]         = {ATT_PROP_NOTIFY | ATT_PROP_READ, UINT16_TO_BYTES(CUSTS_HANDLE_ECG_SAMPLE_MASK), ATT_UUID_ECG_SAMPLE_MASK};
+static const uint16_t   NotifyCharChLen_ecg_sample_mask        = sizeof(NotifyChData_ecg_sample_mask);
+
+/* Notification ECG Sample Mask Value */
+static const uint8_t    NotifyValUuid_ecg_sample_mask[]         = {UINT16_TO_BYTES(CUSTS_HANDLE_ECG_SAMPLE_MASK)};
+static       uint8_t    NotifyValData_ecg_sample_mask[20]       = {0x00};
+static const uint16_t   NotifyValLen_ecg_sample_mask            = sizeof(NotifyValData_ecg_sample_mask);
+
+/* Notification ECG Sample Mask Client Characteristic Configuration. */
+static       uint8_t    NotifyValClientChrConfigData_ecg_sample_mask[]          = {0x00, 0x00};
+static const uint16_t   NotifyValClientChrConfigLen_ecg_sample_mask             = sizeof(NotifyValClientChrConfigData_ecg_sample_mask);
+
+/* Notification ECG Sample Characteristic User Description. */
+static const uint8_t    NotifyChUsrDescrData_ecg_sample_mask[]                  = "Notification ECG Sample Mask Characteristic";
+static const uint16_t   NotifyChUsrDescrLen_ecg_sample_mask                     = sizeof(NotifyChUsrDescrData_ecg_sample_mask) - 1u;
+
+/* Notification ECG Result Characteristic */
+static const uint8_t    NotifyChData_ecg_result[]               = {ATT_PROP_NOTIFY | ATT_PROP_READ, UINT16_TO_BYTES(CUSTS_HANDLE_ECG_RESULT), ATT_UUID_ECG_RESULT};
+static const uint16_t   NotifyCharChLen_ecg_result              = sizeof(NotifyChData_ecg_result);
+
+/* Notification ECG Result Value */
+static const uint8_t    NotifyValUuid_ecg_result[]              = {UINT16_TO_BYTES(CUSTS_HANDLE_ECG_RESULT)};
+static       uint8_t    NotifyValData_ecg_result[20]            = {0x00};
+static const uint16_t   NotifyValLen_ecg_result                 = sizeof(NotifyValData_ecg_result);
+
+/* Notification ECG Result Client Characteristic Configuration. */
+static       uint8_t    NotifyValClientChrConfigData_ecg_result[]          = {0x00, 0x00};
+static const uint16_t   NotifyValClientChrConfigLen_ecg_result             = sizeof(NotifyValClientChrConfigData_ecg_result);
+
+/* Notification ECG Result Characteristic User Description. */
+static const uint8_t    NotifyChUsrDescrData_ecg_result[]                  = "Notification ECG Result Characteristic";
+static const uint16_t   NotifyChUsrDescrLen_ecg_result                     = sizeof(NotifyChUsrDescrData_ecg_result) - 1u;
 
 /* Indication Sample Characteristic */
 static const uint8_t    IndicateChData[]                        = {ATT_PROP_INDICATE | ATT_PROP_READ, UINT16_TO_BYTES(CUSTS_HANDLE_INDICATEONLY), ATT_UUID_CUSTS_INDICATEONLY};
@@ -206,30 +239,30 @@ static const attsAttr_t svcCustList[] =
         ATTS_PERMIT_READ
     },
 #endif
-    // Characteristic Declaration
+    // ECG Sample Characteristic Declaration
     {
         attChUuid,
-        (uint8_t *) NotifyChData,
-        (uint16_t *) &NotifyCharChLen,
-        sizeof(NotifyChData),
+        (uint8_t *) NotifyChData_ecg_sample,
+        (uint16_t *) &NotifyCharChLen_ecg_sample,
+        sizeof(NotifyChData_ecg_sample),
         0,
         ATTS_PERMIT_READ
     },
     // Characteristic Value
     {
-        NotifyValUuid,
-        (uint8_t *) NotifyValData,
-        (uint16_t *) &NotifyValLen,
-        sizeof(NotifyValUuid),
+        NotifyValUuid_ecg_sample,
+        (uint8_t *) NotifyValData_ecg_sample,
+        (uint16_t *) &NotifyValLen_ecg_sample,
+        sizeof(NotifyValUuid_ecg_sample),
         (ATTS_SET_UUID_128 | ATTS_SET_VARIABLE_LEN),
         ATTS_PERMIT_READ
     },
     // Client Characteristic Configuration
     {
         attCliChCfgUuid,
-        (uint8_t *) NotifyValClientChrConfigData,
-        (uint16_t *) &NotifyValClientChrConfigLen,
-        sizeof(NotifyValClientChrConfigData),
+        (uint8_t *) NotifyValClientChrConfigData_ecg_sample,
+        (uint16_t *) &NotifyValClientChrConfigLen_ecg_sample,
+        sizeof(NotifyValClientChrConfigData_ecg_sample),
         ATTS_SET_CCC,
         ATTS_PERMIT_READ | ATTS_PERMIT_WRITE
     },
@@ -237,9 +270,85 @@ static const attsAttr_t svcCustList[] =
     /* Characteristic user description. */
     {
         attChUserDescUuid,
-        (uint8_t *) NotifyChUsrDescrData,
-        (uint16_t *) &NotifyChUsrDescrLen,
-        sizeof(NotifyChUsrDescrData),
+        (uint8_t *) NotifyChUsrDescrData_ecg_sample,
+        (uint16_t *) &NotifyChUsrDescrLen_ecg_sample,
+        sizeof(NotifyChUsrDescrData_ecg_sample),
+        0,
+        ATTS_PERMIT_READ
+    },
+#endif
+    // ECG Sample Mask Characteristic Declaration
+    {
+        attChUuid,
+        (uint8_t *) NotifyChData_ecg_sample_mask,
+        (uint16_t *) &NotifyCharChLen_ecg_sample_mask,
+        sizeof(NotifyChData_ecg_sample_mask),
+        0,
+        ATTS_PERMIT_READ
+    },
+    // Characteristic Value
+    {
+        NotifyValUuid_ecg_sample_mask,
+        (uint8_t *) NotifyValData_ecg_sample_mask,
+        (uint16_t *) &NotifyValLen_ecg_sample_mask,
+        sizeof(NotifyValUuid_ecg_sample_mask),
+        (ATTS_SET_UUID_128 | ATTS_SET_VARIABLE_LEN),
+        ATTS_PERMIT_READ
+    },
+    // Client Characteristic Configuration
+    {
+        attCliChCfgUuid,
+        (uint8_t *) NotifyValClientChrConfigData_ecg_sample_mask,
+        (uint16_t *) &NotifyValClientChrConfigLen_ecg_sample_mask,
+        sizeof(NotifyValClientChrConfigData_ecg_sample_mask),
+        ATTS_SET_CCC,
+        ATTS_PERMIT_READ | ATTS_PERMIT_WRITE
+    },
+#ifdef INCLUDE_USER_DESCR
+    /* Characteristic user description. */
+    {
+        attChUserDescUuid,
+        (uint8_t *) NotifyChUsrDescrData_ecg_sample_mask,
+        (uint16_t *) &NotifyChUsrDescrLen_ecg_sample_mask,
+        sizeof(NotifyChUsrDescrData_ecg_sample_mask),
+        0,
+        ATTS_PERMIT_READ
+    },
+#endif
+    // ECG Result Characteristic Declaration
+    {
+        attChUuid,
+        (uint8_t *) NotifyChData_ecg_result,
+        (uint16_t *) &NotifyCharChLen_ecg_result,
+        sizeof(NotifyChData_ecg_result),
+        0,
+        ATTS_PERMIT_READ
+    },
+    // Characteristic Value
+    {
+        NotifyValUuid_ecg_result,
+        (uint8_t *) NotifyValData_ecg_result,
+        (uint16_t *) &NotifyValLen_ecg_result,
+        sizeof(NotifyValUuid_ecg_result),
+        (ATTS_SET_UUID_128 | ATTS_SET_VARIABLE_LEN),
+        ATTS_PERMIT_READ
+    },
+    // Client Characteristic Configuration
+    {
+        attCliChCfgUuid,
+        (uint8_t *) NotifyValClientChrConfigData_ecg_result,
+        (uint16_t *) &NotifyValClientChrConfigLen_ecg_result,
+        sizeof(NotifyValClientChrConfigData_ecg_result),
+        ATTS_SET_CCC,
+        ATTS_PERMIT_READ | ATTS_PERMIT_WRITE
+    },
+#ifdef INCLUDE_USER_DESCR
+    /* Characteristic user description. */
+    {
+        attChUserDescUuid,
+        (uint8_t *) NotifyChUsrDescrData_ecg_result,
+        (uint16_t *) &NotifyChUsrDescrLen_ecg_result,
+        sizeof(NotifyChUsrDescrData_ecg_result),
         0,
         ATTS_PERMIT_READ
     },

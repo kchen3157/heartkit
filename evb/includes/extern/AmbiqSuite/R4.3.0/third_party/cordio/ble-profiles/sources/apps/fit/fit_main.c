@@ -201,6 +201,9 @@ enum
   FIT_HRS_HRM_CCC_IDX,                    /*! Heart rate service, heart rate monitor characteristic */
   FIT_BATT_LVL_CCC_IDX,                   /*! Battery service, battery level characteristic */
   FIT_RSCS_SM_CCC_IDX,                   /*! Runninc speed and cadence measurement characteristic */
+  CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX,
+  CUSTS_HANDLE_ECG_SAMPLE_MASK_CCC_IDX,
+  CUSTS_HANDLE_ECG_RESULT_CCC_IDX,
   FIT_NUM_CCC_IDX
 };
 
@@ -211,7 +214,11 @@ static const attsCccSet_t fitCccSet[FIT_NUM_CCC_IDX] =
   {GATT_SC_CH_CCC_HDL,    ATT_CLIENT_CFG_INDICATE,  DM_SEC_LEVEL_NONE},   /* FIT_GATT_SC_CCC_IDX */
   {HRS_HRM_CH_CCC_HDL,    ATT_CLIENT_CFG_NOTIFY,    DM_SEC_LEVEL_NONE},   /* FIT_HRS_HRM_CCC_IDX */
   {BATT_LVL_CH_CCC_HDL,   ATT_CLIENT_CFG_NOTIFY,    DM_SEC_LEVEL_NONE},   /* FIT_BATT_LVL_CCC_IDX */
-  {RSCS_RSM_CH_CCC_HDL,   ATT_CLIENT_CFG_NOTIFY,    DM_SEC_LEVEL_NONE}    /* FIT_RSCS_SM_CCC_IDX */
+  {RSCS_RSM_CH_CCC_HDL,   ATT_CLIENT_CFG_NOTIFY,    DM_SEC_LEVEL_NONE},   /* FIT_RSCS_SM_CCC_IDX */
+  {CUSTS_HANDLE_ECG_SAMPLE_CCC,   ATT_CLIENT_CFG_NOTIFY,    DM_SEC_LEVEL_NONE},   /* CUSTS_HANDLE_ECG_SAMPLE_CCC */
+  {CUSTS_HANDLE_ECG_SAMPLE_MASK_CCC,   ATT_CLIENT_CFG_NOTIFY,    DM_SEC_LEVEL_NONE},   /* CUSTS_HANDLE_ECG_SAMPLE_MASK_CCC */
+  {CUSTS_HANDLE_ECG_RESULT_CCC,   ATT_CLIENT_CFG_NOTIFY,    DM_SEC_LEVEL_NONE},   /* CUSTS_HANDLE_ECG_RESULT_CCC */
+
 };
 
 /**************************************************************************************************
@@ -394,6 +401,48 @@ static void fitProcCccState(fitMsg_t *pMsg)
     else
     {
       BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
+    }
+    return;
+  }
+
+  /* handle CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX CCC */
+  if (pMsg->ccc.idx == CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX)
+  {
+    if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
+    {
+      // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
+    }
+    else
+    {
+      // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
+    }
+    return;
+  }
+
+  /* handle CUSTS_HANDLE_ECG_SAMPLE_MASK_CCC_IDX CCC */
+  if (pMsg->ccc.idx == CUSTS_HANDLE_ECG_SAMPLE_MASK_CCC_IDX)
+  {
+    if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
+    {
+      // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
+    }
+    else
+    {
+      // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
+    }
+    return;
+  }
+
+  /* handle CUSTS_HANDLE_ECG_RESULT_CCC_IDX CCC */
+  if (pMsg->ccc.idx == CUSTS_HANDLE_ECG_RESULT_CCC_IDX)
+  {
+    if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
+    {
+      // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
+    }
+    else
+    {
+      // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
     }
     return;
   }
@@ -804,6 +853,10 @@ void FitHandler(wsfEventMask_t event, wsfMsgHdr_t *pMsg)
 /*************************************************************************************************/
 void FitStart(void)
 {
+  uint32_t  temp = 1000;
+
+  uint32_t*  p_tmp1 = &temp;
+
   /* Register for stack callbacks */
   DmRegister(fitDmCback);
   DmConnRegister(DM_CLIENT_ID_APP, fitDmCback);
