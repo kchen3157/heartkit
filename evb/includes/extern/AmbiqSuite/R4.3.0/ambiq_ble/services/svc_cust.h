@@ -92,7 +92,7 @@ extern "C"
 
 /* Customized Service UUID */
 
-#define CUSTSVC_HANDLE_START                0x01A0
+#define CUSTSVC_HANDLE_START                0x09A0
 #define CUSTSVC_HANDLE_END                  (CUSTS_HANDLE_LAST - 1)
 
 /* AMDTP Service Handles */
