@@ -170,13 +170,21 @@ setup_task(void *pvParameters)
     //
     // Create the functional tasks
     //
-    xTaskCreate(RadioTask, "RadioTask", 512, 0, 3, &radio_task_handle);
+    xTaskCreate(RadioTask, "RadioTask", 512, 0, 4, &radio_task_handle);
     //
     // The setup operations are complete, so suspend the setup task now.
     //
-    vTaskSuspend(NULL);
+    // vTaskSuspend(NULL);
 
-    while (1);
+extern void loop();
+    const TickType_t xDelay = 200 / portTICK_PERIOD_MS;
+  
+    while (1) {
+		 // Perform action here.
+        loop();
+  		 // Wait for the next cycle.
+        vTaskDelay( xDelay );
+    }
 }
 
 //*****************************************************************************
@@ -197,7 +205,7 @@ run_tasks(void)
     //
     // Create essential tasks.
     //
-    xTaskCreate(setup_task, "Setup", 512, 0, 3, &xSetupTask);
+    xTaskCreate(setup_task, "Setup", 1024, 0, 3, &xSetupTask);
 
     //
     // Start the scheduler.

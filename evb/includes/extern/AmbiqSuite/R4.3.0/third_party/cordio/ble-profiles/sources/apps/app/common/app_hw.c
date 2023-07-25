@@ -274,6 +274,12 @@ void AppHwHrmRead(appHrm_t *pHrm)
 
   pHrm->pRrInterval = appHwRrInterval;
   pHrm->numIntervals = 2;
+
+  appHwHeartRate++;
+  if (appHwHeartRate > 120)
+  {
+    appHwHeartRate = 70;
+  }
 }
 
 /*************************************************************************************************/

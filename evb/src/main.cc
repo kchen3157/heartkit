@@ -33,6 +33,7 @@ extern "C" {
 #endif
 #include "hci_api.h"
 #include "hci_drv_apollo.h"
+#include "FreeRTOSConfig.h"
 #ifdef __cplusplus
     }
 #endif
@@ -56,7 +57,7 @@ const ns_power_config_t ns_pwr_config = {.api = &ns_power_V1_0_0,
                                          .bNeedAudAdc = false,
                                          .bNeedSharedSRAM = false,
                                          .bNeedCrypto = true,
-                                         .bNeedBluetooth = false,
+                                         .bNeedBluetooth = true,
                                          .bNeedUSB = true,
                                          .bNeedIOM = false, // We will manually enable IOM0
                                          .bNeedAlternativeUART = false,
@@ -146,14 +147,9 @@ start_collecting(void) {
     if (collectMode == SENSOR_DATA_COLLECT) {
         start_sensor();
         // Discard first second for sensor warm up time
-        uint32_t sampleIndex = 0;
         for (size_t i = 0; i < 100; i++) {
-            uint32_t numSamples = capture_sensor_data(hkData);
-            if ((i & 1) == 1) {
-                ns_printf("%f\n", hkData[sampleIndex]);
-            }
+            capture_sensor_data(hkData);
             sleep_us(10000);
-            sampleIndex += numSamples;
         }
     }
     numSamples = 0;
@@ -237,6 +233,9 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
         .data = (uint8_t *)(&samples[offset]),
         .dataLength = numSamples * sizeof(float32_t),
     };
+
+    // ns_printf("send samples %d bytes\n", binaryBlock.dataLength);
+
     dataBlock commandBlock = {
         .length = offset, .dType = float32_e, .description = rpcSendSamplesDesc, .cmd = generic_cmd, .buffer = binaryBlock};
     ns_rpc_data_sendBlockToPC(&commandBlock);
@@ -257,6 +256,7 @@ send_mask_to_pc(uint8_t *mask, uint32_t offset, uint32_t maskLen) {
     };
     dataBlock commandBlock = {
         .length = offset, .dType = uint8_e, .description = rpcSendMaskDesc, .cmd = generic_cmd, .buffer = binaryBlock};
+    // ns_printf("send mask %d bytes\n", binaryBlock.dataLength);
     ns_rpc_data_sendBlockToPC(&commandBlock);
 }
 
@@ -275,6 +275,7 @@ send_results_to_pc(hk_result_t *result) {
         .dataLength = sizeof(hk_result_t),
     };
     dataBlock commandBlock = {.length = 1, .dType = uint32_e, .description = rpcSendResultsDesc, .cmd = generic_cmd, .buffer = binaryBlock};
+    // ns_printf("send result %d bytes\n", binaryBlock.dataLength);
     ns_rpc_data_sendBlockToPC(&commandBlock);
 }
 
@@ -308,8 +309,7 @@ collect_samples() {
         // }
     }
     numSamples += newSamples;
-    sleep_us(5000);
-    ns_printf("Number of Samples: %lu\r\n", numSamples);
+    // sleep_us(500);
     return newSamples;
 }
 
@@ -351,7 +351,7 @@ setup() {
     ns_printf("Please select data collection options:\n\n\t1. BTN1=sensor\n\t2. BTN2=stimulus\n");
 }
 
-void
+extern "C" void
 loop() {
     /**
      * @brief Application loop
@@ -365,8 +365,8 @@ loop() {
             wakeup();
             state = START_COLLECT_STATE;
         } else {
-            ns_printf("IDLE_STATE\n");
-            deepsleep();
+            // ns_printf("IDLE_STATE\n");
+            // deepsleep();
         }
         break;
 
@@ -400,11 +400,10 @@ loop() {
             linear_downsample(hkData, HK_SENSOR_LEN, SENSOR_RATE, hkData, HK_DATA_LEN, SAMPLE_RATE);
         }
         hk_preprocess(hkData);
-        for (size_t i = 0; i < HK_DATA_LEN; i += SAMPLE_RATE) {
-            uint32_t numSamples = MIN(HK_DATA_LEN - i, SAMPLE_RATE);
+        for (size_t i = 0; i < HK_DATA_LEN; i += 50) {
+            uint32_t numSamples = MIN(HK_DATA_LEN - i, 50);
             send_samples_to_pc(hkData, i, numSamples);
         }
-        
         state = INFERENCE_STATE;
         break;
 
@@ -416,14 +415,14 @@ loop() {
         break;
 
     case DISPLAY_STATE:
-        for (size_t i = 0; i < HK_DATA_LEN; i += SAMPLE_RATE) {
-            uint32_t maskLen = MIN(HK_DATA_LEN - i, SAMPLE_RATE);
+        for (size_t i = 0; i < HK_DATA_LEN; i += 50) {
+            uint32_t maskLen = MIN(HK_DATA_LEN - i, 50);
             send_mask_to_pc(hkSegMask, i, maskLen);
         }
         send_results_to_pc(&hkResults);
-        ns_delay_us(10000);
+        // ns_delay_us(10000);
         print_to_pc("DISPLAY_STATE\n");
-        ns_delay_us(DISPLAY_LEN_USEC);
+        // ns_delay_us(DISPLAY_LEN_USEC);
         am_hal_pwrctrl_mcu_mode_select(AM_HAL_PWRCTRL_MCU_MODE_LOW_POWER);
         if (sensorCollectBtnPressed | clientCollectBtnPressed) {
             sensorCollectBtnPressed = false;
@@ -455,7 +454,6 @@ main(void) {
      */
     setup();
     HciDrvRadioBoot(1);
-    while (1) {
-        loop();
-    }
+    run_tasks();
+
 }

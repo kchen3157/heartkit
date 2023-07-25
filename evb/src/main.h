@@ -28,7 +28,7 @@ typedef enum DataCollectMode DataCollectMode;
 
 void
 setup(void);
-void
+extern "C" void
 loop(void);
 
 #endif

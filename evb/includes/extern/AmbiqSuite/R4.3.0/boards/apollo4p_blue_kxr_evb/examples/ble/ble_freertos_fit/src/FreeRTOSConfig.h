@@ -86,7 +86,7 @@ extern "C"
 
 /* Software timer related definitions. */
 #define configUSE_TIMERS                        1
-#define configTIMER_TASK_PRIORITY               3
+#define configTIMER_TASK_PRIORITY               4
 #define configTIMER_QUEUE_LENGTH                5
 #define configTIMER_TASK_STACK_DEPTH            configMINIMAL_STACK_SIZE
 
@@ -109,7 +109,7 @@ extern "C"
 #define INCLUDE_vTaskSuspend                    1
 #define INCLUDE_xResumeFromISR                  0
 #define INCLUDE_vTaskDelayUntil                 1
-#define INCLUDE_vTaskDelay                      0
+#define INCLUDE_vTaskDelay                      1
 #define INCLUDE_xTaskGetSchedulerState          0
 #define INCLUDE_xTaskGetCurrentTaskHandle       0
 #define INCLUDE_uxTaskGetStackHighWaterMark     0
