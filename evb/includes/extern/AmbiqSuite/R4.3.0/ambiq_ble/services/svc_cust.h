@@ -70,7 +70,7 @@ extern "C"
 /*! Macro for building Ambiq UUIDs */
 #define ATT_UUID_AMBIQ_BUILD(part)      UINT16_TO_BYTES(part), ATT_UUID_AMBIQ_BASE
 
-/* Partial Customized Service UUID */
+/* Partial ECG Service UUID */
 #define ATT_UUID_CUST_SERVICE_PART          0x2000
 #define ATT_UUID_CUST_SERVICE               ATT_UUID_AMBIQ_BUILD(ATT_UUID_CUST_SERVICE_PART)
 
