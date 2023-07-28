@@ -405,16 +405,21 @@ static void fitProcCccState(fitMsg_t *pMsg)
     return;
   }
 
+  extern dmConnId_t conn_handle_custs;
+
   /* handle CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX CCC */
   if (pMsg->ccc.idx == CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX)
   {
     if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
     {
       // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
+      conn_handle_custs = pMsg->ccc.hdr.param;
     }
     else
     {
       // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
+      conn_handle_custs = DM_CONN_ID_NONE;
+
     }
     return;
   }
@@ -425,10 +430,13 @@ static void fitProcCccState(fitMsg_t *pMsg)
     if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
     {
       // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
+      conn_handle_custs = pMsg->ccc.hdr.param;
     }
     else
     {
       // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
+      conn_handle_custs = DM_CONN_ID_NONE;
+
     }
     return;
   }
@@ -439,10 +447,12 @@ static void fitProcCccState(fitMsg_t *pMsg)
     if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
     {
       // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
+      conn_handle_custs = pMsg->ccc.hdr.param;
     }
     else
     {
       // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
+      conn_handle_custs = DM_CONN_ID_NONE;
     }
     return;
   }

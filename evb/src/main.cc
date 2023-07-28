@@ -32,6 +32,12 @@
 extern "C" {
 #endif
 #include "hci_api.h"
+#include "dm_api.h"
+#include "att_api.h"
+#include "svc_ch.h"
+#include "svc_cfg.h"
+#include "svc_cust.h"
+#include "custss_api.h"
 #include "hci_drv_apollo.h"
 #include "FreeRTOSConfig.h"
 #ifdef __cplusplus
@@ -226,9 +232,9 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
      * @param numSamples # samples to send
      */
     static char rpcSendSamplesDesc[] = "SEND_SAMPLES";
-    if (!usbAvailable) {
-        return;
-    }
+    // if (!usbAvailable) {
+    //     return;
+    // }
     binary_t binaryBlock = {
         .data = (uint8_t *)(&samples[offset]),
         .dataLength = numSamples * sizeof(float32_t),
@@ -238,7 +244,10 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
 
     dataBlock commandBlock = {
         .length = offset, .dType = float32_e, .description = rpcSendSamplesDesc, .cmd = generic_cmd, .buffer = binaryBlock};
-    ns_rpc_data_sendBlockToPC(&commandBlock);
+    // ns_rpc_data_sendBlockToPC(&commandBlock);
+  extern dmConnId_t conn_handle_custs;
+
+    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, 64, (uint8_t *)&commandBlock);
 }
 
 void
