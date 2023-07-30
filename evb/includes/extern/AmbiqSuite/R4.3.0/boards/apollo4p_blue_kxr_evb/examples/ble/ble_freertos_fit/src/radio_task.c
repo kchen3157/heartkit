@@ -123,14 +123,14 @@ void exactle_stack_init(void);
 // extra AMOTA_PACKET_SIZE bytes for OTA handling
 static uint32_t g_pui32BufMem[
         (WSF_BUF_POOLS*16
-         + 16*8 + 32*4 + 64*6 + 280*14) / sizeof(uint32_t)];
+         + 16*8 + 32*4 + 64*6 + 280*164) / sizeof(uint32_t)];
 // Default pool descriptor.
 static wsfBufPoolDesc_t g_psPoolDescriptors[WSF_BUF_POOLS] =
 {
     {  16,  8 },
     {  32,  4 },
     {  64,  6 },
-    { 280,  14 }
+    { 280,  164 }
 };
 
 //*****************************************************************************
