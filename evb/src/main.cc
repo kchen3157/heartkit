@@ -246,8 +246,8 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
         .length = offset, .dType = float32_e, .description = rpcSendSamplesDesc, .cmd = generic_cmd, .buffer = binaryBlock};
     // ns_rpc_data_sendBlockToPC(&commandBlock);
   extern dmConnId_t conn_handle_custs;
-
-    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, 64, (uint8_t *)&commandBlock);
+    // send raw sensor samples, the length can be determined by BLE stack when receiving.
+    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, binaryBlock.dataLength, (uint8_t*)binaryBlock.data);
 }
 
 void
@@ -302,9 +302,9 @@ collect_samples() {
             return newSamples;
         }
         newSamples = fetch_stimulus_samples(hkData, numSamples, reqSamples);
-        // if (newSamples) {
-        //     send_samples_to_pc(hkData, numSamples, newSamples);
-        // }
+        if (newSamples) {
+            send_samples_to_pc(hkData, numSamples, newSamples);
+        }
         // newSamples = fetch_samples_from_pc(hkData, numSamples, reqSamples);
 
     } else if (collectMode == SENSOR_DATA_COLLECT) {
@@ -313,9 +313,9 @@ collect_samples() {
             return newSamples;
         }
         newSamples = capture_sensor_data(&hkData[numSamples]);
-        // if (newSamples) {
-        //     send_samples_to_pc(hkData, numSamples, newSamples);
-        // }
+        if (newSamples) {
+            send_samples_to_pc(hkData, numSamples, newSamples);
+        }
     }
     numSamples += newSamples;
     // sleep_us(500);
@@ -409,10 +409,11 @@ loop() {
             linear_downsample(hkData, HK_SENSOR_LEN, SENSOR_RATE, hkData, HK_DATA_LEN, SAMPLE_RATE);
         }
         hk_preprocess(hkData);
-        for (size_t i = 0; i < HK_DATA_LEN; i += 50) {
-            uint32_t numSamples = MIN(HK_DATA_LEN - i, 50);
-            send_samples_to_pc(hkData, i, numSamples);
-        }
+        // Send samples in COLLECT_STATE.
+        // for (size_t i = 0; i < HK_DATA_LEN; i += 50) {
+        //     uint32_t numSamples = MIN(HK_DATA_LEN - i, 50);
+        //     send_samples_to_pc(hkData, i, numSamples);
+        // }
         state = INFERENCE_STATE;
         break;
 
