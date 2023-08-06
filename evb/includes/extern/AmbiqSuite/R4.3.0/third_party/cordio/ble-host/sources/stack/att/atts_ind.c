@@ -425,6 +425,10 @@ static void attsHandleValueIndNtf(dmConnId_t connId, uint16_t handle, uint16_t v
     transTimedOut = FALSE;
   }
 
+extern uint32_t am_util_stdio_printf(const char *pcFmt, ...);
+
+  am_util_stdio_printf("handle %d, len %d\n", handle, valueLen);
+
   WsfTaskUnlock();
 
   /* if MTU size known for connection */

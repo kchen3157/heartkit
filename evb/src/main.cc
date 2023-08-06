@@ -13,6 +13,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <stdint.h>
 // neuralSPOT
 #include "ns_ambiqsuite_harness.h"
 #include "ns_malloc.h"
@@ -232,6 +233,8 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
      * @param numSamples # samples to send
      */
     static char rpcSendSamplesDesc[] = "SEND_SAMPLES";
+    // 50 is max number of samples to send at a time.
+    uint32_t    temp_buffer[1+50];
     // if (!usbAvailable) {
     //     return;
     // }
@@ -240,6 +243,9 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
         .dataLength = numSamples * sizeof(float32_t),
     };
 
+    temp_buffer[0] = offset;
+    memcpy(&temp_buffer[1], &samples[offset], numSamples * sizeof(float32_t));
+
     // ns_printf("send samples %d bytes\n", binaryBlock.dataLength);
 
     dataBlock commandBlock = {
@@ -247,7 +253,7 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
     // ns_rpc_data_sendBlockToPC(&commandBlock);
   extern dmConnId_t conn_handle_custs;
     // send raw sensor samples, the length can be determined by BLE stack when receiving.
-    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, binaryBlock.dataLength, (uint8_t*)binaryBlock.data);
+    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, sizeof(temp_buffer), (uint8_t*)temp_buffer);
 }
 
 void
@@ -256,9 +262,9 @@ send_mask_to_pc(uint8_t *mask, uint32_t offset, uint32_t maskLen) {
      * @brief Send mask to PC
      */
     static char rpcSendMaskDesc[] = "SEND_MASK";
-    if (!usbAvailable) {
-        return;
-    }
+    // if (!usbAvailable) {
+    //     return;
+    // }
     binary_t binaryBlock = {
         .data = (uint8_t *)(&mask[offset]),
         .dataLength = maskLen * sizeof(uint8_t),
@@ -280,9 +286,9 @@ send_results_to_pc(hk_result_t *result) {
      */
     static char rpcSendResultsDesc[] = "SEND_RESULTS";
     hk_print_result(result);
-    if (!usbAvailable) {
-        return;
-    }
+    // if (!usbAvailable) {
+    //     return;
+    // }
     binary_t binaryBlock = {
         .data = (uint8_t *)result,
         .dataLength = sizeof(hk_result_t),
@@ -428,15 +434,15 @@ loop() {
     case INFERENCE_STATE:
         print_to_pc("INFERENCE_STATE\n");
         app_err = hk_run(hkData, hkSegMask, &hkResults);
+        for (size_t i = 0; i < HK_DATA_LEN; i += 50) {
+            uint32_t maskLen = MIN(HK_DATA_LEN - i, 50);
+            send_mask_to_pc(hkSegMask, i, maskLen);
+        }
         am_hal_pwrctrl_mcu_mode_select(AM_HAL_PWRCTRL_MCU_MODE_LOW_POWER);
         state = app_err == 1 ? FAIL_STATE : DISPLAY_STATE;
         break;
 
     case DISPLAY_STATE:
-        for (size_t i = 0; i < HK_DATA_LEN; i += 50) {
-            uint32_t maskLen = MIN(HK_DATA_LEN - i, 50);
-            send_mask_to_pc(hkSegMask, i, maskLen);
-        }
         send_results_to_pc(&hkResults);
         // ns_delay_us(10000);
         print_to_pc("DISPLAY_STATE\n");
