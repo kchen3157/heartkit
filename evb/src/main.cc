@@ -59,6 +59,9 @@ static int volatile clientCollectBtnPressed = false;
 static AppState state = IDLE_STATE;
 static DataCollectMode collectMode = SENSOR_DATA_COLLECT;
 
+#define MAX_SAMPLE_NUM_SENT  (60)   // 60*4 bytes.
+#define MAX_MASK_NUM_SENT    (240)  // 240*1 bytes.
+
 const ns_power_config_t ns_pwr_config = {.api = &ns_power_V1_0_0,
                                          .eAIPowerMode = NS_MINIMUM_PERF,
                                          .bNeedAudAdc = false,
@@ -234,7 +237,7 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
      */
     static char rpcSendSamplesDesc[] = "SEND_SAMPLES";
     // 50 is max number of samples to send at a time.
-    uint32_t    temp_buffer[1+50];
+    uint32_t    temp_buffer[1+MAX_SAMPLE_NUM_SENT];
     // if (!usbAvailable) {
     //     return;
     // }
@@ -253,7 +256,7 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
     // ns_rpc_data_sendBlockToPC(&commandBlock);
   extern dmConnId_t conn_handle_custs;
     // send raw sensor samples, the length can be determined by BLE stack when receiving.
-    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, sizeof(temp_buffer), (uint8_t*)temp_buffer);
+    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, (1+numSamples)<<2, (uint8_t*)temp_buffer);
 }
 
 void
@@ -311,7 +314,7 @@ collect_samples() {
     uint32_t newSamples = 0;
     uint32_t reqSamples = 0;
     if (collectMode == CLIENT_DATA_COLLECT) {
-        reqSamples = MIN(HK_DATA_LEN - numSamples, 50);
+        reqSamples = MIN(HK_DATA_LEN - numSamples, MAX_SAMPLE_NUM_SENT);
         if (numSamples >= HK_DATA_LEN) {
             return newSamples;
         }
@@ -322,7 +325,7 @@ collect_samples() {
         // newSamples = fetch_samples_from_pc(hkData, numSamples, reqSamples);
 
     } else if (collectMode == SENSOR_DATA_COLLECT) {
-        reqSamples = MIN(HK_SENSOR_LEN - numSamples, 50);
+        reqSamples = MIN(HK_SENSOR_LEN - numSamples, MAX_SAMPLE_NUM_SENT);
         if (numSamples >= HK_SENSOR_LEN) {
             return newSamples;
         }
@@ -434,8 +437,8 @@ loop() {
     case INFERENCE_STATE:
         print_to_pc("INFERENCE_STATE\n");
         app_err = hk_run(hkData, hkSegMask, &hkResults);
-        for (size_t i = 0; i < HK_DATA_LEN; i += 50) {
-            uint32_t maskLen = MIN(HK_DATA_LEN - i, 50);
+        for (size_t i = 0; i < HK_DATA_LEN; i += MAX_MASK_NUM_SENT) {
+            uint32_t maskLen = MIN(HK_DATA_LEN - i, MAX_MASK_NUM_SENT);
             send_mask_to_pc(hkSegMask, i, maskLen);
         }
         am_hal_pwrctrl_mcu_mode_select(AM_HAL_PWRCTRL_MCU_MODE_LOW_POWER);
