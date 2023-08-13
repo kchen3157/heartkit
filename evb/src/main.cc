@@ -254,9 +254,8 @@ send_samples_to_pc(float32_t *samples, uint32_t offset, uint32_t numSamples) {
     dataBlock commandBlock = {
         .length = offset, .dType = float32_e, .description = rpcSendSamplesDesc, .cmd = generic_cmd, .buffer = binaryBlock};
     // ns_rpc_data_sendBlockToPC(&commandBlock);
-  extern dmConnId_t conn_handle_custs;
     // send raw sensor samples, the length can be determined by BLE stack when receiving.
-    CustssSendNtf(conn_handle_custs, 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, (1+numSamples)<<2, (uint8_t*)temp_buffer);
+    CustssSendNtf(CustssConnId(), 4 /*CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE, (1+numSamples)<<2, (uint8_t*)temp_buffer);
 }
 
 void
@@ -276,9 +275,8 @@ send_mask_to_pc(uint8_t *mask, uint32_t offset, uint32_t maskLen) {
         .length = offset, .dType = uint8_e, .description = rpcSendMaskDesc, .cmd = generic_cmd, .buffer = binaryBlock};
     // ns_printf("send mask %d bytes\n", binaryBlock.dataLength);
     // ns_rpc_data_sendBlockToPC(&commandBlock);
-extern dmConnId_t conn_handle_custs;
     // send sample masks, the length can be determined by BLE stack when receiving.
-    CustssSendNtf(conn_handle_custs, 5 /*CUSTS_HANDLE_ECG_SAMPLE_MASK_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE_MASK, binaryBlock.dataLength, (uint8_t*)binaryBlock.data);
+    CustssSendNtf(CustssConnId(), 5 /*CUSTS_HANDLE_ECG_SAMPLE_MASK_CCC_IDX*/, CUSTS_HANDLE_ECG_SAMPLE_MASK, binaryBlock.dataLength, (uint8_t*)binaryBlock.data);
 
 }
 
@@ -299,9 +297,8 @@ send_results_to_pc(hk_result_t *result) {
     dataBlock commandBlock = {.length = 1, .dType = uint32_e, .description = rpcSendResultsDesc, .cmd = generic_cmd, .buffer = binaryBlock};
     // ns_printf("send result %d bytes\n", binaryBlock.dataLength);
     // ns_rpc_data_sendBlockToPC(&commandBlock);
-extern dmConnId_t conn_handle_custs;
     // send sample masks, the length can be determined by BLE stack when receiving.
-    CustssSendNtf(conn_handle_custs, 6 /*CUSTS_HANDLE_ECG_RESULT_CCC_IDX*/, CUSTS_HANDLE_ECG_RESULT, binaryBlock.dataLength, (uint8_t*)binaryBlock.data);
+    CustssSendNtf(CustssConnId(), 6 /*CUSTS_HANDLE_ECG_RESULT_CCC_IDX*/, CUSTS_HANDLE_ECG_RESULT, binaryBlock.dataLength, (uint8_t*)binaryBlock.data);
 
 }
 

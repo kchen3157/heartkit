@@ -405,21 +405,16 @@ static void fitProcCccState(fitMsg_t *pMsg)
     return;
   }
 
-  extern dmConnId_t conn_handle_custs;
-
   /* handle CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX CCC */
   if (pMsg->ccc.idx == CUSTS_HANDLE_ECG_SAMPLE_CCC_IDX)
   {
     if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
     {
-      // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
-      conn_handle_custs = pMsg->ccc.hdr.param;
+      // start something here if needed.
     }
     else
     {
-      // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
-      conn_handle_custs = DM_CONN_ID_NONE;
-
+      // stop something here if needed.
     }
     return;
   }
@@ -429,14 +424,11 @@ static void fitProcCccState(fitMsg_t *pMsg)
   {
     if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
     {
-      // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
-      conn_handle_custs = pMsg->ccc.hdr.param;
+      // start something here if needed.
     }
     else
     {
-      // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
-      conn_handle_custs = DM_CONN_ID_NONE;
-
+      // stop something here if needed.
     }
     return;
   }
@@ -446,13 +438,11 @@ static void fitProcCccState(fitMsg_t *pMsg)
   {
     if (pMsg->ccc.value == ATT_CLIENT_CFG_NOTIFY)
     {
-      // BasMeasBattStart((dmConnId_t) pMsg->ccc.hdr.param, FIT_BATT_TIMER_IND, CUSTS_HANDLE_NOTIFYONLY_CCC_IDX);
-      conn_handle_custs = pMsg->ccc.hdr.param;
+      // start something here if needed.
     }
     else
     {
-      // BasMeasBattStop((dmConnId_t) pMsg->ccc.hdr.param);
-      conn_handle_custs = DM_CONN_ID_NONE;
+      // stop something here if needed.
     }
     return;
   }
@@ -686,12 +676,14 @@ static void fitProcMsg(fitMsg_t *pMsg)
     case DM_CONN_OPEN_IND:
       HrpsProcMsg(&pMsg->hdr);
       BasProcMsg(&pMsg->hdr);
+      CustssProcMsg(&pMsg->hdr);
       // AppSlaveSecurityReq(1);
       uiEvent = APP_UI_CONN_OPEN;
       break;
 
     case DM_CONN_CLOSE_IND:
       fitClose(pMsg);
+      CustssProcMsg(pMsg);
       uiEvent = APP_UI_CONN_CLOSE;
       break;
 
@@ -863,9 +855,6 @@ void FitHandler(wsfEventMask_t event, wsfMsgHdr_t *pMsg)
 /*************************************************************************************************/
 void FitStart(void)
 {
-  uint32_t  temp = 1000;
-
-  uint32_t*  p_tmp1 = &temp;
 
   /* Register for stack callbacks */
   DmRegister(fitDmCback);

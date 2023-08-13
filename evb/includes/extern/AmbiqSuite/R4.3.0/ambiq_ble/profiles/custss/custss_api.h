@@ -247,6 +247,8 @@ void CustssSendInd(dmConnId_t connId, uint8_t idx, uint16_t handle, uint16_t len
 //*****************************************************************************
 void CustssProcMsg(wsfMsgHdr_t *pMsg);
 
+dmConnId_t CustssConnId(void);
+
 #ifdef __cplusplus
 }
 #endif

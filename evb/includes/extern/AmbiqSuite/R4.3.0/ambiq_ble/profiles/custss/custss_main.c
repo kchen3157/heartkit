@@ -80,8 +80,6 @@
 //*****************************************************************************
 #define CUSTSS_MAX_CONN             1
 
-dmConnId_t conn_handle_custs = DM_CONN_ID_NONE;
-
 //*****************************************************************************
 //
 // Global variables
@@ -238,6 +236,7 @@ void CustssScheduledActionStop(dmConnId_t connId)
 void CustssInit(wsfHandlerId_t handlerId)
 {
     s_CtrlBlock.handlerId = handlerId;
+    s_CtrlBlock.connId[CUSTSS_MAX_CONN -1 ] = DM_CONN_ID_NONE;
 }
 
 //*****************************************************************************
@@ -350,11 +349,15 @@ void CustssProcMsg(wsfMsgHdr_t *pMsg)
 {
     if (pMsg->event == DM_CONN_OPEN_IND)
     {
-        // things to be done when connected
+        // Save connection ID.
+        s_CtrlBlock.connId[CUSTSS_MAX_CONN -1 ] = (dmConnId_t) pMsg->param;
     }
     else if (pMsg->event == DM_CONN_CLOSE_IND)
     {
-        // things to be done when disconnected
+        //  APP_TRACE_INFO1("conn close reason = 0x%x\n", pMsg->connClose.reason);
+
+        // Clear connection ID.
+        s_CtrlBlock.connId[CUSTSS_MAX_CONN -1 ] = DM_CONN_ID_NONE;
     }
     else if (pMsg->event == ATTS_HANDLE_VALUE_CNF)
     {
@@ -368,4 +371,9 @@ void CustssProcMsg(wsfMsgHdr_t *pMsg)
     {
 
     }
+}
+// return connection id for custom service.
+dmConnId_t CustssConnId(void)
+{
+    return s_CtrlBlock.connId[CUSTSS_MAX_CONN -1];
 }
