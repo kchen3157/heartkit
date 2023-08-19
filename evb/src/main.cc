@@ -448,13 +448,9 @@ loop() {
         print_to_pc("DISPLAY_STATE\n");
         // ns_delay_us(DISPLAY_LEN_USEC);
         am_hal_pwrctrl_mcu_mode_select(AM_HAL_PWRCTRL_MCU_MODE_LOW_POWER);
-        if (sensorCollectBtnPressed | clientCollectBtnPressed) {
-            sensorCollectBtnPressed = false;
-            clientCollectBtnPressed = false;
-            state = IDLE_STATE;
-        } else {
-            state = START_COLLECT_STATE;
-        }
+        sensorCollectBtnPressed = false;
+        clientCollectBtnPressed = false;
+        state = IDLE_STATE;
         break;
 
     case FAIL_STATE:
